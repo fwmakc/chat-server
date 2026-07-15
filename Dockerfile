@@ -9,7 +9,7 @@ RUN cd /shared && npm install && npm run build && npm pack
 
 # Install deps (file:../shared/lms-common-1.0.0.tgz resolves to /shared/)
 COPY chat-server/package*.json chat-server/.npmrc ./
-RUN npm ci
+RUN npm install --no-package-lock
 
 # Build service
 COPY chat-server/ ./
