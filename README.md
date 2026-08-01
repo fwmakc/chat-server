@@ -1,26 +1,37 @@
 # Chat Server
 
-WebSocket-сервер чата: комнаты, подключения, обмен сообщениями в реальном времени.
+WebSocket chat server: rooms, connections, real-time messaging via Socket.IO.
 
-Перенесён из [api-server](https://github.com/fwmakc/api-server) на этапе разделения монолита (Stage 1, Issue #6).
+Port **3004**. Part of the microservices split (Stage 1, Issue #6).
 
-## Статус: заготовка
+## Status: Stub
 
-Код перенесён, но требует адаптации перед запуском:
+Code migrated from api-server, requires adaptation before production use:
 
-- [ ] Извлечь `common/` (CommonService, EntityController, колонки, DTO) в общий npm-пакет
-- [ ] Настроить JWT verification через JWKS auth-server
-- [ ] Настроить WebSocket adapter в `main.ts`
-- [ ] Адаптировать импорты `@src/account/` → получать account_id из JWT
-- [ ] Подключить Redis для event bus
+- [x] Extract `common/` into `api-server-toolkit` npm package
+- [x] JWT verification via JWKS (auth-server)
+- [ ] Configure WebSocket adapter in `main.ts`
+- [ ] Adapt `@src/account/` imports → get `account_id` from JWT
+- [ ] Connect Redis for Socket.IO multi-instance adapter
 
-## Архитектура
+## Architecture
 
-См. [Issue #6](https://github.com/fwmakc/api-server/issues/6) — полная схема разделения.
+See [Issue #6](https://github.com/fwmakc/api-server/issues/6) — full split plan.
 
-## Запуск
+## Development
 
-```shell
+```bash
 npm install
 npm run dev
 ```
+
+## Port Assignments
+
+| Service | Port |
+|---------|------|
+| auth-server | 3001 |
+| file-server | 3002 |
+| message-server | 3003 |
+| **chat-server** | **3004** |
+| event-server | 3005 |
+| api-server | 5000 |
