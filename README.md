@@ -1,37 +1,50 @@
 # Chat Server
 
-WebSocket chat server: rooms, connections, real-time messaging via Socket.IO.
-
-Port **3004**. Part of the microservices split (Stage 1, Issue #6).
+> WebSocket chat server (Socket.IO) — **incomplete, in development override only.**
 
 ## Status: Stub
 
-Code migrated from api-server, requires adaptation before production use:
+This service is not production-ready. It is included in `docker-compose.override.yml`
+(dev only) for future development.
 
-- [x] Extract `common/` into `api-server-toolkit` npm package
-- [x] JWT verification via JWKS (auth-server)
-- [ ] Configure WebSocket adapter in `main.ts`
-- [ ] Adapt `@src/account/` imports → get `account_id` from JWT
-- [ ] Connect Redis for Socket.IO multi-instance adapter
+**What's done:**
+- Basic NestJS + Socket.IO setup
+- Health endpoint
+- Dockerfile (Node 22, tsconfig-paths)
 
-## Architecture
+**What's missing:**
+- JWT authentication on WebSocket connections (currently unauthenticated)
+- Redis adapter for multi-instance fanout
+- Event subscription (listen to event-server for real-time notifications)
+- Room management, message persistence
+- Rate limiting, abuse prevention
 
-See [Issue #6](https://github.com/fwmakc/api-server/issues/6) — full split plan.
+## Alternatives
 
-## Development
+If you need real-time chat now, consider:
+- **Centrifugo** — language-agnostic real-time server, JWT auth, Redis backend
+- **Soketi** — open-source Pusher-compatible WebSocket server
+- **Socket.IO + Redis adapter** — if you want to complete this service
 
-```bash
-npm install
-npm run dev
+## Role in the stack (planned)
+
+```
+client → nginx (WebSocket upgrade) → chat-server
+chat-server → auth-server (JWT verification)
+chat-server → Redis (pub/sub for multi-instance)
+chat-server → event-server (subscribe to domain events)
 ```
 
-## Port Assignments
+## Configuration (.env)
 
-| Service | Port |
-|---------|------|
-| auth-server | 3001 |
-| file-server | 3002 |
-| message-server | 3003 |
-| **chat-server** | **3004** |
-| event-server | 3005 |
-| api-server | 5000 |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | 3004 | HTTP port |
+| `AUTH_SERVER_URL` | http://localhost:3001 | Auth server for JWT |
+| `REDIS_HOST` | redis | Redis host (for Socket.IO adapter) |
+| `REDIS_PORT` | 6379 | Redis port |
+
+## Related services
+
+- [auth-server](https://github.com/fwmakc/auth-server) — JWT verification
+- [gateway-server](https://github.com/fwmakc/gateway-server) — Docker Compose, Nginx
