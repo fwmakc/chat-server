@@ -1,6 +1,6 @@
 {
   "name": "chat-server",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "WebSocket chat server (rooms, sockets, real-time messaging)",
   "private": true,
   "license": "MIT",
