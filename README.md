@@ -2,6 +2,15 @@
 
 > WebSocket chat server (Socket.IO) — **incomplete, in development override only.**
 
+## What This Is
+
+A **working scaffold** for real-time chat — not production-ready yet, but wired
+into the stack with Docker, health checks, and the toolkit bootstrap. The basic
+NestJS + Socket.IO setup is functional; JWT auth, Redis adapter, and room
+management need to be completed.
+
+Part of a [microservices stack](https://github.com/fwmakc/gateway-server).
+
 ## Status: Stub
 
 This service is not production-ready. It is included in `docker-compose.override.yml`
