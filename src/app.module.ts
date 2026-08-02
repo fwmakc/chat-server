@@ -4,7 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { SentryGlobalFilter, SentryModule } from "@sentry/nestjs/setup";
 import { AuthModule } from "@src/auth/auth.module";
 import { ChatModule } from "./chat/chat.module";
-import { HealthModule } from "@src/health/health.module";
+import { HealthModule } from "api-server-toolkit/health";
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { HealthModule } from "@src/health/health.module";
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     ChatModule,
-    HealthModule,
+    HealthModule.forRoot("chat-server"),
   ],
   providers: [
     { provide: APP_FILTER, useClass: SentryGlobalFilter },
