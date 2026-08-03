@@ -1,7 +1,7 @@
 # Chat Server
 
 [![CI](https://github.com/fwmakc/chat-server/actions/workflows/test.yml/badge.svg)](https://github.com/fwmakc/chat-server/actions/workflows/test.yml)
-[![Version](https://img.shields.io/badge/version-v2.0.0-blue)](https://github.com/fwmakc/chat-server/releases)
+[![Version](https://img.shields.io/badge/version-v0.1.0-blue)](https://github.com/fwmakc/chat-server/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/fwmakc/chat-server/blob/master/LICENSE)
 
 > WebSocket chat server (Socket.IO) — **incomplete, in development override only.**
