@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/version-v0.1.0-blue)](https://github.com/fwmakc/chat-server/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/fwmakc/chat-server/blob/master/LICENSE)
 
-> WebSocket chat server (Socket.IO) — **incomplete, in development override only.**
+> Reference implementation: realtime WebSocket pattern — Socket.IO, JWT auth, Redis adapter (incomplete).
 
 ## What This Is
 
@@ -14,6 +14,17 @@ NestJS + Socket.IO setup is functional; JWT auth, Redis adapter, and room
 management need to be completed.
 
 Part of a [microservices stack](https://github.com/fwmakc/gateway-server).
+
+## Pattern
+
+This service demonstrates the **realtime gateway pattern** in the toolkit stack:
+
+- **WebSocket** — Socket.IO, room management, broadcast
+- **JWT auth** — token validation via auth-server JWKS
+- **Redis adapter** — multi-instance fanout, pub/sub
+- **Event subscription** — listen to event-server for real-time notifications
+
+Clone this when you need: real-time communication, live updates, push notifications, chat.
 
 ## Status: Stub
 
