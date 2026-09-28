@@ -10,7 +10,7 @@ async function main() {
 
   Sentry.setup(app);
   Helmet.setup(app);
-  Cors.setup(app, { origin: true, credentials: true });
+  Cors.setup(app);
   ValidationPipe.setup(app);
   Log.setup(app);
   Prefix.setup(app);
