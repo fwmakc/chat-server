@@ -1,6 +1,6 @@
 {
   "name": "chat-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "WebSocket chat server (rooms, sockets, real-time messaging)",
   "private": true,
   "license": "MIT",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/fwmakc/chat-server#readme",
   "scripts": {
-    "build": "nest build",
+    "build": "tsc -p tsconfig.build.json",
     "dev": "nest start --watch",
     "prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
@@ -39,7 +39,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.0.0",
     "@sentry/nestjs": "^10.69.0",
-    "api-server-toolkit": "github:fwmakc/api-server-toolkit#v0.17.0",
+    "api-server-toolkit": "github:fwmakc/api-server-toolkit#v0.18.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "helmet": "^8.3.0",
