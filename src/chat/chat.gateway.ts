@@ -34,7 +34,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("join_room")
   async handleJoinRoom(
     @MessageBody() room: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     await client.join(room);
     this.logger.log(`Client ${client.id} joined room: ${room}`);
@@ -43,7 +43,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("leave_room")
   async handleLeaveRoom(
     @MessageBody() room: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     await client.leave(room);
     this.logger.log(`Client ${client.id} left room: ${room}`);
@@ -52,7 +52,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("send_message")
   async handleMessage(
     @MessageBody() data: { room: string; message: string },
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     this.server.to(data.room).emit("receive_message", {
       room: data.room,

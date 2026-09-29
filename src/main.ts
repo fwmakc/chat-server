@@ -2,7 +2,14 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import { bootstrap } from "api-server-toolkit/bootstrap";
-import { Sentry, Helmet, Cors, ValidationPipe, Log, Prefix } from "api-server-toolkit/bootstrap/setup";
+import {
+  Sentry,
+  Helmet,
+  Cors,
+  ValidationPipe,
+  Log,
+  Prefix,
+} from "api-server-toolkit/bootstrap/setup";
 import { AppModule } from "@src/app.module";
 
 async function main() {
