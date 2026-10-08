@@ -179,7 +179,9 @@ export class ChatService {
       channelId: String(channelId),
       accountId: String(actor.id),
     });
-    return { channel, myRole: me?.role ?? ("member" as MemberRole) };
+    // Superuser grade is moderator — report what the ops actually enforce.
+    const myRole = me?.role ?? (actor.isSuperuser ? "moderator" : "member");
+    return { channel, myRole: myRole as MemberRole };
   }
 
   async listMyChannels(actor: ChatActor) {
@@ -322,6 +324,12 @@ export class ChatService {
     accountId: number,
     role: Exclude<MemberRole, "owner">,
   ) {
+    // The type excludes "owner"; runtime callers (WS tools, future code)
+    // don't get that guarantee — ownership changes go through
+    // create/deleteChannel only.
+    if (role !== "moderator" && role !== "member") {
+      throw new BadRequestException("The owner role cannot be assigned");
+    }
     await this.assertMember(channelId, actor, "owner");
     if (Number(accountId) === actor.id && !actor.isSuperuser) {
       throw new BadRequestException(
@@ -563,8 +571,11 @@ export class ChatService {
       .createQueryBuilder("m")
       .where("m.channel_id = :channelId", { channelId: String(channelId) })
       .andWhere("m.deleted_at IS NULL")
-      .andWhere("m.body ILIKE :pattern ESCAPE '\\\\'", {
+      // ESCAPE goes through a bound parameter: an inline '\\' literal is
+      // TWO characters under standard_conforming_strings → "invalid escape"
+      .andWhere("m.body ILIKE :pattern ESCAPE :esc", {
         pattern: `%${escaped}%`,
+        esc: "\\",
       })
       .orderBy("m.id", "DESC")
       .take(Math.min(Math.max(limit, 1), 50))
