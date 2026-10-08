@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -28,13 +28,106 @@ jobs:
       - name: Lint
         run: npx eslint "{src,apps,libs,test}/**/*.ts"
 
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: "1234"
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      # Domain specs boot the real DataSource against a scratch schema
+      # (synchronize + dropSchema) — same pattern as the other services.
+      - name: Create test database
+        run: |
+          PGPASSWORD=1234 psql -h 127.0.0.1 -U root -d postgres \
+            -c "CREATE DATABASE chat_server_test;"
+
+      - name: Run tests
+        run: npm test
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_USER: root
+          DB_PASSWORD: "1234"
+          DB_NAME: chat_server_test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: chat-server
+
+      # Sibling checkouts must match the package.json pins — otherwise the
+      # Docker build compiles against a stale toolkit and drifts every time
+      # a dependency is bumped. ($GITHUB_ENV is visible only to subsequent
+      # steps, so this runs before the sibling checkout.)
+      - name: Resolve sibling pins from package.json
+        run: |
+          echo "TOOLKIT_REF=$(node -p "require('./chat-server/package.json').dependencies['api-server-toolkit'].split('#')[1]")" >> $GITHUB_ENV
+          echo "EVENTSERVER_REF=$(node -p "require('./chat-server/package.json').dependencies['event-server'].split('#')[1]")" >> $GITHUB_ENV
+
+      # Dockerfile copies the toolkit from a sibling directory
+      - uses: actions/checkout@v7
+        with:
+          repository: fwmakc/api-server-toolkit
+          ref: ${{ env.TOOLKIT_REF }}
+          path: api-server-toolkit
+
+      # Dockerfile copies the event contracts from a sibling directory
+      # (dist/contracts is committed in event-server — no build step).
+      - uses: actions/checkout@v7
+        with:
+          repository: fwmakc/event-server
+          ref: ${{ env.EVENTSERVER_REF }}
+          path: event-server
+
+      # dist/ is gitignored in the toolkit — build it for the Docker COPY
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Build toolkit
+        run: cd api-server-toolkit && npm install --legacy-peer-deps --ignore-scripts && npx tsc
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: chat-server/Dockerfile
+          push: false
+
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
 
@@ -51,7 +144,7 @@ jobs:
         run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom
           path: sbom.cdx.json

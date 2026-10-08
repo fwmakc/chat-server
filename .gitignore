@@ -1,5 +1,8 @@
+# compiled output
+dist/*
+!dist/contracts/
+*.tsbuildinfo
 node_modules/
-dist/
 .env
 sessions/
 *.log
