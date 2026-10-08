@@ -20,6 +20,15 @@ export class ChatMetrics {
 
   constructor(private readonly moduleRef: ModuleRef) {}
 
+  // touch all getters at boot: a freshly restarted replica with no WS
+  // traffic yet must still expose the series (a counter that only appears
+  // with its first inc() breaks Prometheus dashboards on every restart)
+  onModuleInit(): void {
+    void this.wsConnections;
+    void this.wsMessages;
+    void this.wsRateLimited;
+  }
+
   private counter(name: string, help: string): Counter {
     try {
       const metrics = this.moduleRef.get(MetricsService, { strict: false });
